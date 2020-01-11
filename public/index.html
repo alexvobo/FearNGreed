@@ -1,0 +1,169 @@
+<html lang="en">
+
+<head>
+    <title>Express</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    <link rel="stylesheet" href="stylesheets/style.css">
+
+</head>
+
+<body>
+<script>
+    $(document).ready(function () {
+
+        $.ajax({
+            url: 'chart/',
+            type: 'GET',
+            dataType: 'json',
+            success: (data) => {
+                console.log(data);
+                let history = [];
+                let fearHistory = [];
+                $.each(data, function (key, value) {
+                    var ohlc = {};
+                    var fg = {};
+                    let row = value;
+
+                    ohlc.time = fg.time = row.date;
+                    fg.value = row.value;
+                    fg.classification = row.classification;
+                    ohlc.open = row.open;
+                    ohlc.high = row.high;
+                    ohlc.low = row.low;
+                    ohlc.close = row.close;
+
+                    history.push(ohlc);
+                    fearHistory.push(fg);
+                });
+                console.log(fearHistory);
+
+                document.body.style.position = 'relative';
+                var container = document.createElement('div');
+                document.body.appendChild(container);
+
+                var chart = LightweightCharts.createChart(container, {
+                    width: 1920,
+                    height: 1080,
+                    layout: {
+                        backgroundColor: '#ffffff',
+                        textColor: 'rgba(0,0,0,0.9)',
+                    },
+                    grid: {
+                        vertLines: {
+                            color: 'rgba(197, 203, 206, 0.5)',
+                        },
+                        horzLines: {
+                            color: 'rgba(197, 203, 206, 0.5)',
+                        },
+                    },
+                    crosshair: {
+                        mode: LightweightCharts.CrosshairMode.Normal,
+                    },
+                    priceScale: {
+                        borderColor: 'rgba(0,0,0,0.8)',
+                    },
+                    timeScale: {
+                        borderColor: 'rgba(0,0,0,0.8)',
+                    },
+                });
+
+                var candleSeries = chart.addCandlestickSeries({
+                    overlay: true,
+                    upColor: 'rgb(44,213,44)',
+                    downColor: 'rgb(239,74,66)',
+                    borderDownColor: 'rgb(239,74,66)',
+                    borderUpColor: 'rgb(44,213,44)',
+                    wickDownColor: 'rgb(239,74,66)',
+                    wickUpColor: 'rgb(44,213,44)',
+                });
+                var lineSeries = chart.addLineSeries({overlay: true});
+
+                lineSeries.setData(fearHistory);
+                candleSeries.setData(history);
+
+
+                var toolTipMargin = 10;
+                var priceScaleWidth = 50;
+                var toolTip = document.createElement('div');
+                toolTip.className = 'three-line-legend';
+                container.appendChild(toolTip);
+                toolTip.style.display = 'block';
+                toolTip.style.left = 3 + 'px';
+                toolTip.style.top = 3 + 'px';
+
+                function setLastBarText() {
+                    var dateStr = history[history.length - 1].time.year + ' - ' + history[history.length - 1].time.month + ' - ' + history[history.length - 1].time.day;
+                    var classify = fearHistory[fearHistory.length - 1];
+                    toolTip.innerHTML = '<div style="font-size: 24px; margin: 4px 0px; color: #20262E">Bitcoin</div>' + '<div style="font-size: 20px; margin: 4px 0px; color: #20262E">Close: ' + history[history.length - 1].close + '</div>' +
+                        '<div style="font-size: 15px; margin: 4px 0px; color: #20262E">' + dateStr + '</div>' + '<div style="font-size: 18px; margin: 4px 0px; color: #20262E">' + classify.classification + '\n' + classify.value + '</div>';
+                }
+
+                setLastBarText();
+
+                chart.subscribeCrosshairMove(function (param) {
+                    if (param === undefined || param.time === undefined || param.point.x < 0 || param.point.x > chart.width || param.point.y < 0 || param.point.y > chart.height) {
+                        setLastBarText();
+                    } else {
+                        dateStr = param.time.year + ' - ' + param.time.month + ' - ' + param.time.day;
+                        var price = param.seriesPrices.get(candleSeries).close;
+                        var classify = fearHistory.find(x => x.time === param.time);
+                        toolTip.innerHTML = '<div style="font-size: 24px; margin: 4px 0px; color: #20262E">Bitcoin</div>' + '<div style="font-size: 20px; margin: 4px 0px; color: #20262E">Close: ' + (Math.round(price * 100) / 100).toFixed(2) + '</div>' + '<div style="font-size: 15px; margin: 4px 0px; color: #20262E">' + dateStr + '</div>' + '<div style="font-size: 18px; margin: 4px 0px; color: #20262E">' + classify.classification + '\n' + classify.value + '</div>'
+                    }
+
+                });
+            }
+        });
+    });
+
+    //Take data,
+    //    const widget = LightweightCharts.createChart(document.body, {
+    //        width: 800,
+    //        height: 400
+    //    });
+    //    const lineSeries = widget.addLineSeries();
+    //    lineSeries.setData([{
+    //        time: '2019-04-11',
+    //        value: 80.01
+    //    },
+    //        {
+    //            time: '2019-04-12',
+    //            value: 96.63
+    //        },
+    //        {
+    //            time: '2019-04-13',
+    //            value: 76.64
+    //        },
+    //        {
+    //            time: '2019-04-14',
+    //            value: 81.89
+    //        },
+    //        {
+    //            time: '2019-04-15',
+    //            value: 74.43
+    //        },
+    //        {
+    //            time: '2019-04-16',
+    //            value: 80.01
+    //        },
+    //        {
+    //            time: '2019-04-17',
+    //            value: 96.63
+    //        },
+    //        {
+    //            time: '2019-04-18',
+    //            value: 76.64
+    //        },
+    //        {
+    //            time: '2019-04-19',
+    //            value: 81.89
+    //        },
+    //        {
+    //            time: '2019-04-20',
+    //            value: 74.43
+    //        },
+    //    ]);
+</script>
+</body>
+
+</html>
