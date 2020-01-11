@@ -1,1 +1,3 @@
-to run: nodemon app.js
+to run: 
+npm install -g
+nodemon app.js
