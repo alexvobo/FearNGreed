@@ -16,14 +16,56 @@ body {
 }
 
 .three-line-legend {
-    width: 96px;
+    width: 800px;
     height: 70px;
     position: absolute;
-    padding: 8px;
+    padding-left:50px;
+    padding-top:10px;
     font-size: 12px;
-    color: rgb(32,38,46);
+    color: rgb(32, 38, 46);
     background-color: rgba(255, 255, 255, 0.23);
     text-align: left;
     z-index: 1000;
     pointer-events: none;
+}
+
+.pair {
+    left: 115%;
+    position: absolute;
+    font-size: 28px;
+    margin: 4px 0px;
+    color: #20262E;
+}
+
+.ohlc {
+    font-size: 20px;
+    margin: 4px 0px;
+    color: #20262E;
+}
+
+.date {
+    font-size: 20px;
+    margin: 4px 0px;
+    color: #20262E;
+
+}
+
+.fg {
+    font-size: 20px;
+    margin: 4px 0px;
+    color: #20262E;
+}
+
+.green {
+    color: green !important;
+}
+.extreme-green {
+    color: #00ff00 !important;
+}
+
+.red {
+     color: #800000 !important;
+ }
+.extreme-red {
+    color: red !important;
 }

@@ -44,7 +44,7 @@
 
                 var chart = LightweightCharts.createChart(container, {
                     width: 1920,
-                    height: 1080,
+                    height: 900,
                     layout: {
                         backgroundColor: '#ffffff',
                         textColor: 'rgba(0,0,0,0.9)',
@@ -92,26 +92,74 @@
                 toolTip.style.left = 3 + 'px';
                 toolTip.style.top = 3 + 'px';
 
+                function setfgColor(classification) {
+                    switch (classification) {
+                        case "Greed":
+                            return "green";
+                        case "Extreme Greed":
+                            return "extreme-green";
+                        case "Fear":
+                            return "red";
+                        case "Extreme Fear":
+                            return "extreme-red";
+                        default:
+                            return ""
+                    }
+                }
+
+                function setohlcColor(prevClose, close) {
+                    if (!prevClose) prevClose = 0;
+                    if (close > prevClose) {
+                        return "extreme-green";
+                    } else {
+                        return "extreme-red";
+                    }
+                }
+
                 function setLastBarText() {
-                    var dateStr = history[history.length - 1].time.year + ' - ' + history[history.length - 1].time.month + ' - ' + history[history.length - 1].time.day;
+                    var candle = history[history.length - 1];
+                    var dateStr = candle.time.year + ' - ' + candle.time.month + ' - ' + candle.time.day;
                     var classify = fearHistory[fearHistory.length - 1];
-                    toolTip.innerHTML = '<div style="font-size: 24px; margin: 4px 0px; color: #20262E">Bitcoin</div>' + '<div style="font-size: 20px; margin: 4px 0px; color: #20262E">Close: ' + history[history.length - 1].close + '</div>' +
-                        '<div style="font-size: 15px; margin: 4px 0px; color: #20262E">' + dateStr + '</div>' + '<div style="font-size: 18px; margin: 4px 0px; color: #20262E">' + classify.classification + '\n' + classify.value + '</div>';
+                    toolTip.innerHTML = '<div class="pair">Bitcoin</div><br>'
+                        + '<div id = "ohlc" class="ohlc">O: ' + candle.open + '\t|\t H: ' + candle.high + '\t|\t L: ' + candle.low + '\t|\t C: ' + candle.close + '</div>' +
+                        '<div class="date">' + dateStr + '</div>' + '<div id = "fg" class="fg"> ~ ' + classify.classification + ' ~ <br> Index - ' + classify.value + '</div>';
+                    $('#fg').addClass(setfgColor(classify.classification));
+                    $('#ohlc').addClass(setohlcColor(history[history.length - 2].close, candle.close));
                 }
 
                 setLastBarText();
+
+                function fixPrice(price) {
+                    return price.toFixed(2);
+                }
+
+                function dateString(date) {
+                    return date.time.year + ' - ' + date.time.month + ' - ' + date.time.day;
+                }
 
                 chart.subscribeCrosshairMove(function (param) {
                     if (param === undefined || param.time === undefined || param.point.x < 0 || param.point.x > chart.width || param.point.y < 0 || param.point.y > chart.height) {
                         setLastBarText();
                     } else {
-                        dateStr = param.time.year + ' - ' + param.time.month + ' - ' + param.time.day;
-                        var price = param.seriesPrices.get(candleSeries).close;
+                        var dateStr = dateString(param);
+                        var price = param.seriesPrices.get(candleSeries);
                         var classify = fearHistory.find(x => x.time === param.time);
-                        toolTip.innerHTML = '<div style="font-size: 24px; margin: 4px 0px; color: #20262E">Bitcoin</div>' + '<div style="font-size: 20px; margin: 4px 0px; color: #20262E">Close: ' + (Math.round(price * 100) / 100).toFixed(2) + '</div>' + '<div style="font-size: 15px; margin: 4px 0px; color: #20262E">' + dateStr + '</div>' + '<div style="font-size: 18px; margin: 4px 0px; color: #20262E">' + classify.classification + '\n' + classify.value + '</div>'
-                    }
+                        toolTip.innerHTML = '<div class="pair">Bitcoin</div><br>' +
+                            '<div id = "ohlc" class="ohlc">O: ' + fixPrice(price.open) + '\t|\t H: ' + fixPrice(price.high) + '\t|\t L: ' + fixPrice(price.low) + '\t|\t C: ' + fixPrice(price.close) + '</div>' +
+                            '<div class="date">' + dateStr + '</div>' + '<div id = "fg" class="fg"> ~ ' + classify.classification + ' ~ <br> Index - ' + classify.value + '</div>';
+                        $('#fg').addClass(setfgColor(classify.classification));
 
+                        //console.log(date);
+                        var curDay = new Date(dateStr);
+                        var prevDay = new Date(dateStr).setDate(curDay.getDate() - 1); //always a num
+
+                        var previousCandle = history.find(x => new Date(dateString(x)).valueOf() === prevDay);
+
+                        $('#ohlc').addClass(setohlcColor(previousCandle.close, fixPrice(price.close)));
+                    }
                 });
+
+
             }
         });
     });
