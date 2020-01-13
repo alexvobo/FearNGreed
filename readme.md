@@ -18,11 +18,6 @@ Powered by the [Fear and Greed Index](https://alternative.me/crypto/fear-and-gre
 Therefore, it's useful to analyze the current sentiment of the Bitcoin market based on volatility, volume, social media, dominance, and trends,  and crunch the numbers into a simple meter from 0 to 100. 
     
     0 means "Extreme Fear", while 100 means "Extreme Greed".
- 
-### Requirements
-- [NodeJS v10.16.3+](https://nodejs.org/en/)
-- NPM 6.13.6+ -> 
-`$ npm install npm@latest -g`
 
 ## Instructions
 
@@ -30,3 +25,8 @@ Therefore, it's useful to analyze the current sentiment of the Bitcoin market ba
     -`$ npm install -g`
 - Run
     -`$ nodemon app.js`
+ 
+### Requirements
+- [NodeJS v10.16.3+](https://nodejs.org/en/)
+- NPM 6.13.6+ -> 
+`$ npm install npm@latest -g`
