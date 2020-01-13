@@ -22,9 +22,9 @@ Therefore, it's useful to analyze the current sentiment of the Bitcoin market ba
 ## Instructions
 
 - Install Node
-    -`$ npm install -g`
+    `$ npm install -g`
 - Run
-    -`$ nodemon app.js`
+    `$ nodemon app.js`
  
 ### Requirements
 - [NodeJS v10.16.3+](https://nodejs.org/en/)
