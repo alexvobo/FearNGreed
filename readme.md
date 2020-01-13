@@ -28,5 +28,5 @@ Therefore, it's useful to analyze the current sentiment of the Bitcoin market ba
  
 ### Requirements
 - [NodeJS v10.16.3+](https://nodejs.org/en/)
-- NPM 6.13.6+ -> 
+- NPM 6.13.6+ 
 `$ npm install npm@latest -g`
